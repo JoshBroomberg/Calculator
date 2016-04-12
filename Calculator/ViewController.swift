@@ -16,17 +16,42 @@ class ViewController: UIViewController {
 
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
+        func append(value: String=digit){
+            display.text = display.text! + value
+        }
+        
         if inputInProcess {
-            display.text = display.text! + digit
+            
+            if digit == "." {
+                var decimal = false
+                for char in display.text!.characters {
+                    if char == "." {
+                        decimal = true
+                    }
+                }
+                if !decimal {
+                    append()
+                }
+            }
+            else if digit == "π" {
+                
+            }
+            else {
+                append("\(M_PI)")
+            }
+            
         }
         else {
             display.text = digit
             inputInProcess = true
         }
         
+        
+        
     }
     
     var operatingStack = Array<Double>()
+    
     @IBAction func enter() {
         inputInProcess = false
         operatingStack.append(displayValue)
@@ -34,9 +59,15 @@ class ViewController: UIViewController {
         
     }
     
+    @IBAction func clear() {
+        operatingStack = []
+        display.text = "0"
+        inputInProcess = false
+    }
+    
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
-        
+        print("\(operation)")
         if inputInProcess{
             enter()
         }
@@ -47,6 +78,8 @@ class ViewController: UIViewController {
             case "-": performOperation {$1 - $0}
             case "/": performOperation {$1 / $0}
             case "√": performSingleOperation {sqrt($0)}
+            case "sin": performSingleOperation {sin($0)}
+            case "cos": performSingleOperation {cos($0)}
             default: break
         }
     }
@@ -59,7 +92,7 @@ class ViewController: UIViewController {
     }
     
     func performSingleOperation(operation: Double -> Double) {
-        if operatingStack.count >= 2 {
+        if operatingStack.count >= 1 {
             displayValue = operation(operatingStack.removeLast())
             enter()
         }
