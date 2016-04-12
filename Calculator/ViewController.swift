@@ -12,32 +12,25 @@ class ViewController: UIViewController {
 
     @IBOutlet weak var display: UILabel!
     
+    @IBOutlet weak var log: UILabel!
+    
     var inputInProcess = false
+    var decimalAlready = false
+    var operatingStack = Array<Double>()
+    var logEmpty = true
 
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
-        func append(value: String=digit){
-            display.text = display.text! + value
-        }
         
         if inputInProcess {
-            
             if digit == "." {
-                var decimal = false
-                for char in display.text!.characters {
-                    if char == "." {
-                        decimal = true
-                    }
+                if !decimalAlready {
+                    decimalAlready = true
+                    display.text = display.text! + digit
                 }
-                if !decimal {
-                    append()
-                }
-            }
-            else if digit == "π" {
-                
             }
             else {
-                append("\(M_PI)")
+                display.text = display.text! + digit
             }
             
         }
@@ -45,29 +38,38 @@ class ViewController: UIViewController {
             display.text = digit
             inputInProcess = true
         }
-        
-        
-        
     }
     
-    var operatingStack = Array<Double>()
+    func appendToLog(logItem: String) {
+        log.numberOfLines = 0;
+        if logEmpty {
+            log.text = logItem + "\n"
+            logEmpty = false
+        }
+        else {
+           log.text = log.text! + logItem + "\n"
+        }
+    }
+    
     
     @IBAction func enter() {
         inputInProcess = false
         operatingStack.append(displayValue)
-        print("\(operatingStack)")
-        
+        appendToLog("\(displayValue)")
     }
     
     @IBAction func clear() {
         operatingStack = []
         display.text = "0"
         inputInProcess = false
+        decimalAlready = false
+        logEmpty = true
+        log.text = ""
     }
     
     @IBAction func operate(sender: UIButton) {
         let operation = sender.currentTitle!
-        print("\(operation)")
+        appendToLog("\(operation)")
         if inputInProcess{
             enter()
         }
@@ -101,7 +103,12 @@ class ViewController: UIViewController {
     
     var displayValue: Double {
         get {
-            return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+            if display.text! != "π" {
+                return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+            }
+            else {
+                return M_PI
+            }
         }
         
         set {
