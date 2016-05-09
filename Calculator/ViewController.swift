@@ -15,7 +15,6 @@ class ViewController: UIViewController {
     @IBOutlet weak var log: UILabel!
     
     var inputInProcess = false
-    var decimalAlready = false
     var operatingStack = Array<Double>()
     var logEmpty = true
 
@@ -24,8 +23,7 @@ class ViewController: UIViewController {
         
         if inputInProcess {
             if digit == "." {
-                if !decimalAlready {
-                    decimalAlready = true
+                if displayString.rangeOfString(".") == nil {
                     display.text = display.text! + digit
                 }
             }
@@ -53,26 +51,44 @@ class ViewController: UIViewController {
     
     
     @IBAction func enter() {
+
         inputInProcess = false
-        operatingStack.append(displayValue)
-        appendToLog("\(displayValue)")
+        if let value = displayValue {
+            operatingStack.append(value)
+            appendToLog("\(value)")
+        } else {
+            displayString = "error"
+        }
+        
+    }
+    
+    @IBAction func back() {
+        if inputInProcess {
+            if (displayString as NSString).length > 1 {
+                displayString = displayString[displayString.startIndex..<displayString.endIndex.predecessor()]
+            } else {
+                displayValue = 0
+            }
+        }
     }
     
     @IBAction func clear() {
         operatingStack = []
         display.text = "0"
         inputInProcess = false
-        decimalAlready = false
         logEmpty = true
         log.text = ""
     }
     
     @IBAction func operate(sender: UIButton) {
+        let dualPurposeFunction = ["±"]
         let operation = sender.currentTitle!
-        appendToLog("\(operation)")
         if inputInProcess{
-            enter()
+            if dualPurposeFunction.indexOf(operation) == nil {
+                enter()
+            }
         }
+        appendToLog("\(operation)")
         
         switch operation {
             case "*": performOperation {$0 * $1}
@@ -82,6 +98,12 @@ class ViewController: UIViewController {
             case "√": performSingleOperation {sqrt($0)}
             case "sin": performSingleOperation {sin($0)}
             case "cos": performSingleOperation {cos($0)}
+            case "±":
+                if inputInProcess {
+                    displayString = "-" + displayString
+                } else {
+                    performSingleOperation {-($0)}
+                }
             default: break
         }
     }
@@ -90,6 +112,7 @@ class ViewController: UIViewController {
         if operatingStack.count >= 2 {
             displayValue = operation(operatingStack.removeLast(), operatingStack.removeLast())
             enter()
+            displayString = "=\(displayString)"
         }
     }
     
@@ -97,14 +120,25 @@ class ViewController: UIViewController {
         if operatingStack.count >= 1 {
             displayValue = operation(operatingStack.removeLast())
             enter()
+            displayString = "=\(displayString)"
         }
     }
     
+    var displayString: String {
+        get {
+            return display.text!
+        }
+        
+        set{
+            display.text = newValue
+            inputInProcess = false
+        }
+    }
     
-    var displayValue: Double {
+    var displayValue: Double? {
         get {
             if display.text! != "π" {
-                return NSNumberFormatter().numberFromString(display.text!)!.doubleValue
+                return NSNumberFormatter().numberFromString(display.text!)?.doubleValue
             }
             else {
                 return M_PI
@@ -112,8 +146,12 @@ class ViewController: UIViewController {
         }
         
         set {
-            display.text = "\(newValue)"
-            inputInProcess = false
+            if newValue == nil {
+                display.text = "0.0"
+            } else {
+                display.text = "\(newValue!)"
+                inputInProcess = false
+            }
         }
     }
 }
