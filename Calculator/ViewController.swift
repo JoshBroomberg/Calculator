@@ -14,114 +14,146 @@ class ViewController: UIViewController {
     
     @IBOutlet weak var log: UILabel!
     
-    var inputInProcess = false
-    var operatingStack = Array<Double>()
-    var logEmpty = true
+    @IBOutlet weak var clearButton: UIButton!
+    
+    @IBOutlet weak var memoryButton: UIButton!
+    
+    var inputInProgress = false {
+        didSet {
+            if inputInProgress {
+                valueOnscreen = true
+            } else {
+                valueOnscreen = false
+            }
+        }
+    }
+    
+    var resultOnscreen = false {
+        didSet {
+            if resultOnscreen {
+                if let _ = displayValue {
+                    valueOnscreen = true
+                    display.text = display.text! + "="
+                }
+            } else {
+                valueOnscreen = false
+            }
+        }
+    }
+    
+    var valueOnscreen: Bool {
+        get { return resultOnscreen || inputInProgress }
+        set {
+            if valueOnscreen {
+                clearButton.setTitle("C", forState: .Normal)
+                memoryButton.setTitle("→M", forState: .Normal)
+            } else {
+                clearButton.setTitle("AC", forState: .Normal)
+                memoryButton.setTitle("M", forState: .Normal)
+            }
+        }
+    }
+    
+    var brain = CalculatorBrain()
 
     @IBAction func appendDigit(sender: UIButton) {
         let digit = sender.currentTitle!
         
-        if inputInProcess {
-            if digit == "." {
-                if displayString.rangeOfString(".") == nil {
-                    display.text = display.text! + digit
-                }
-            }
-            else {
+        if inputInProgress {
+            if display.text?.rangeOfString("=") != nil {
+                display.text = digit
+            } else {
                 display.text = display.text! + digit
             }
-            
-        }
-        else {
-            display.text = digit
-            inputInProcess = true
-        }
-    }
-    
-    func appendToLog(logItem: String) {
-        log.numberOfLines = 0;
-        if logEmpty {
-            log.text = logItem + "\n"
-            logEmpty = false
-        }
-        else {
-           log.text = log.text! + logItem + "\n"
-        }
-    }
-    
-    
-    @IBAction func enter() {
-
-        inputInProcess = false
-        if let value = displayValue {
-            operatingStack.append(value)
-            appendToLog("\(value)")
         } else {
-            displayString = "error"
+            display.text = digit
+            inputInProgress = true
         }
+    }
+    
+    @IBAction func enterConstant(sender: UIButton) {
+        let constant = sender.currentTitle!
+        displayValue = brain.pushOperand(constant)
+        display.text = constant
+        inputInProgress = false
+    }
+    
+    @IBAction func enterVariable(sender: UIButton) {
+        var variable = sender.currentTitle!
+        if valueOnscreen {
+            if let newValue = displayValue {
+                variable.removeRange(variable.rangeOfString("→")!)
+                brain.setVariable(variable, value: newValue)
+                resetInput("\(variable)←\(newValue)")
+            }
+        } else {
+            displayValue = brain.pushOperand(variable)
+            display.text = variable
+        }
+    }
+
+    @IBAction func enter() {
+        // Fix this method to unify format/input error handling.
+        print("value on screen: \(valueOnscreen)")
+        if valueOnscreen {
+            if let value = displayValue {
+                displayValue = brain.pushOperand(value)
+                inputInProgress = false
+                resultOnscreen = false
+            } else {
+                resetInput("Error in input")
+            }
+        } else {
+            displayValue = brain.evaluate()
+            resultOnscreen = true
+        }
+            
         
     }
     
     @IBAction func back() {
-        if inputInProcess {
-            if (displayString as NSString).length > 1 {
+        if inputInProgress {
+            let displayText = display.text!
+            if (displayText as NSString).length > 1 {
                 displayString = displayString[displayString.startIndex..<displayString.endIndex.predecessor()]
+                display.text = String(displayText.characters.dropLast())
             } else {
-                displayValue = 0
+                resetInput()
             }
         }
     }
     
-    @IBAction func clear() {
-        operatingStack = []
-        display.text = "0"
-        inputInProcess = false
-        logEmpty = true
-        log.text = ""
+
+    @IBAction func clear(sender: UIButton) {
+        let action = sender.currentTitle!
+        if action == "AC" {
+            brain.clear()
+            refreshLog()
+        }
+        resetInput ()
     }
     
     @IBAction func operate(sender: UIButton) {
-        let dualPurposeFunction = ["±"]
         let operation = sender.currentTitle!
-        if inputInProcess{
-            if dualPurposeFunction.indexOf(operation) == nil {
-                enter()
-            }
+        if inputInProgress {
+            enter()
         }
-        appendToLog("\(operation)")
-        
-        switch operation {
-            case "*": performOperation {$0 * $1}
-            case "+": performOperation {$0 + $1}
-            case "-": performOperation {$1 - $0}
-            case "/": performOperation {$1 / $0}
-            case "√": performSingleOperation {sqrt($0)}
-            case "sin": performSingleOperation {sin($0)}
-            case "cos": performSingleOperation {cos($0)}
-            case "±":
-                if inputInProcess {
-                    displayString = "-" + displayString
-                } else {
-                    performSingleOperation {-($0)}
-                }
-            default: break
+        displayValue = brain.pushOperation(operation)
+        resultOnscreen = true
+    }
+    
+    func refreshLog() {
+        if let string = brain.stackString() {
+            log.text = string.stringByReplacingOccurrencesOfString(", ", withString: "\n")
+        } else {
+            log.text = ""
         }
     }
     
-    func performOperation(operation: (Double, Double) -> Double) {
-        if operatingStack.count >= 2 {
-            displayValue = operation(operatingStack.removeLast(), operatingStack.removeLast())
-            enter()
-            displayString = "=\(displayString)"
-        }
-    }
-    
-    func performSingleOperation(operation: Double -> Double) {
-        if operatingStack.count >= 1 {
-            displayValue = operation(operatingStack.removeLast())
-            enter()
-            displayString = "=\(displayString)"
-        }
+    func resetInput(resetTo: String = "0.0") {
+        inputInProgress = false
+        resultOnscreen = false
+        display.text = resetTo
     }
     
     var displayString: String {
@@ -131,27 +163,21 @@ class ViewController: UIViewController {
         
         set{
             display.text = newValue
-            inputInProcess = false
         }
     }
     
     var displayValue: Double? {
         get {
-            if display.text! != "π" {
-                return NSNumberFormatter().numberFromString(display.text!)?.doubleValue
-            }
-            else {
-                return M_PI
-            }
+            return brain.numberFromString(display.text!)
         }
         
         set {
-            if newValue == nil {
-                display.text = "0.0"
+            if let value = newValue {
+                display.text = "\(value)"
             } else {
-                display.text = "\(newValue!)"
-                inputInProcess = false
+                resetInput("Error in stack eval")
             }
+            refreshLog()
         }
     }
 }

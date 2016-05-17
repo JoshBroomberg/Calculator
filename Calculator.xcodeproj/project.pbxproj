@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		160092AC1CE1D89200DFDCD2 /* CalculatorBrain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160092AB1CE1D89200DFDCD2 /* CalculatorBrain.swift */; };
 		16DCD26E1CBB47D3005F6948 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DCD26D1CBB47D3005F6948 /* AppDelegate.swift */; };
 		16DCD2701CBB47D3005F6948 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DCD26F1CBB47D3005F6948 /* ViewController.swift */; };
 		16DCD2731CBB47D3005F6948 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 16DCD2711CBB47D3005F6948 /* Main.storyboard */; };
@@ -46,6 +47,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		160092AB1CE1D89200DFDCD2 /* CalculatorBrain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CalculatorBrain.swift; sourceTree = "<group>"; };
 		16DCD26A1CBB47D3005F6948 /* Calculator.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Calculator.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		16DCD26D1CBB47D3005F6948 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		16DCD26F1CBB47D3005F6948 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -109,8 +111,9 @@
 		16DCD26C1CBB47D3005F6948 /* Calculator */ = {
 			isa = PBXGroup;
 			children = (
-				16DCD26D1CBB47D3005F6948 /* AppDelegate.swift */,
+				160092AB1CE1D89200DFDCD2 /* CalculatorBrain.swift */,
 				16DCD26F1CBB47D3005F6948 /* ViewController.swift */,
+				16DCD26D1CBB47D3005F6948 /* AppDelegate.swift */,
 				16DCD2711CBB47D3005F6948 /* Main.storyboard */,
 				16DCD2741CBB47D3005F6948 /* Assets.xcassets */,
 				16DCD2761CBB47D3005F6948 /* LaunchScreen.storyboard */,
@@ -270,6 +273,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				160092AC1CE1D89200DFDCD2 /* CalculatorBrain.swift in Sources */,
 				16DCD2701CBB47D3005F6948 /* ViewController.swift in Sources */,
 				16DCD26E1CBB47D3005F6948 /* AppDelegate.swift in Sources */,
 			);

@@ -24,7 +24,7 @@
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="justified" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y13-vw-fuS">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="20" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Y13-vw-fuS">
                                 <rect key="frame" x="480" y="67" width="100" height="513"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="513" id="4Jv-j2-hSl"/>
@@ -191,15 +191,15 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
                                 <state key="normal" title="π"/>
                                 <connections>
-                                    <action selector="appendDigit:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Vdg-nZ-aIC"/>
+                                    <action selector="enterConstant:" destination="BYZ-38-t0r" eventType="touchUpInside" id="eIh-ua-RN5"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Buf-eU-87L">
                                 <rect key="frame" x="404.5" y="467" width="67.5" height="125"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <state key="normal" title="C"/>
+                                <state key="normal" title="AC"/>
                                 <connections>
-                                    <action selector="clear" destination="BYZ-38-t0r" eventType="touchUpInside" id="bLY-3K-nbu"/>
+                                    <action selector="clear:" destination="BYZ-38-t0r" eventType="touchUpInside" id="UhM-v3-08m"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="OUe-Db-fpt">
@@ -213,6 +213,10 @@
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4z9-YS-86b">
                                 <rect key="frame" x="404.5" y="200.5" width="67.5" height="125"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
+                                <state key="normal" title="M"/>
+                                <connections>
+                                    <action selector="enterVariable:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y19-5u-chz"/>
+                                </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Aaa-hO-Hvt">
                                 <rect key="frame" x="404.5" y="67" width="67.5" height="125.5"/>
@@ -337,8 +341,10 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="clearButton" destination="Buf-eU-87L" id="UxS-uQ-EI0"/>
                         <outlet property="display" destination="Ka7-xG-71r" id="m7v-dX-6W0"/>
                         <outlet property="log" destination="Y13-vw-fuS" id="oSD-QZ-h2X"/>
+                        <outlet property="memoryButton" destination="4z9-YS-86b" id="FWU-Vm-XHh"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
